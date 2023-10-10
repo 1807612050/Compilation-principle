@@ -1,0 +1,305 @@
+Grammar
+
+    0 $accept: lines $end
+
+    1 lines: lines expr ';'
+    2      | lines ';'
+    3      | /* empty */
+
+    4 expr: expr ADD expr
+    5     | expr MINUS expr
+    6     | expr TIMES expr
+    7     | expr DIVIDE expr
+    8     | LEFTPAR expr RIGHTPAR
+    9     | MINUS expr
+   10     | NUMBER
+   11     | Identifier equal expr
+   12     | Identifier
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+';' (59) 1 2
+error (256)
+ADD (258) 4
+MINUS (259) 5 9
+TIMES (260) 6
+DIVIDE (261) 7
+LEFTPAR (262) 8
+RIGHTPAR (263) 8
+NUMBER (264) 10
+equal (265) 11
+Identifier (266) 11 12
+UMINUS (267)
+
+
+Nonterminals, with rules where they appear
+
+$accept (14)
+    on left: 0
+lines (15)
+    on left: 1 2 3, on right: 0 1 2
+expr (16)
+    on left: 4 5 6 7 8 9 10 11 12, on right: 1 4 5 6 7 8 9 11
+
+
+state 0
+
+    0 $accept: . lines $end
+
+    $default  reduce using rule 3 (lines)
+
+    lines  go to state 1
+
+
+state 1
+
+    0 $accept: lines . $end
+    1 lines: lines . expr ';'
+    2      | lines . ';'
+
+    $end        shift, and go to state 2
+    MINUS       shift, and go to state 3
+    LEFTPAR     shift, and go to state 4
+    NUMBER      shift, and go to state 5
+    Identifier  shift, and go to state 6
+    ';'         shift, and go to state 7
+
+    expr  go to state 8
+
+
+state 2
+
+    0 $accept: lines $end .
+
+    $default  accept
+
+
+state 3
+
+    9 expr: MINUS . expr
+
+    MINUS       shift, and go to state 3
+    LEFTPAR     shift, and go to state 4
+    NUMBER      shift, and go to state 5
+    Identifier  shift, and go to state 6
+
+    expr  go to state 9
+
+
+state 4
+
+    8 expr: LEFTPAR . expr RIGHTPAR
+
+    MINUS       shift, and go to state 3
+    LEFTPAR     shift, and go to state 4
+    NUMBER      shift, and go to state 5
+    Identifier  shift, and go to state 6
+
+    expr  go to state 10
+
+
+state 5
+
+   10 expr: NUMBER .
+
+    $default  reduce using rule 10 (expr)
+
+
+state 6
+
+   11 expr: Identifier . equal expr
+   12     | Identifier .
+
+    equal  shift, and go to state 11
+
+    $default  reduce using rule 12 (expr)
+
+
+state 7
+
+    2 lines: lines ';' .
+
+    $default  reduce using rule 2 (lines)
+
+
+state 8
+
+    1 lines: lines expr . ';'
+    4 expr: expr . ADD expr
+    5     | expr . MINUS expr
+    6     | expr . TIMES expr
+    7     | expr . DIVIDE expr
+
+    ADD     shift, and go to state 12
+    MINUS   shift, and go to state 13
+    TIMES   shift, and go to state 14
+    DIVIDE  shift, and go to state 15
+    ';'     shift, and go to state 16
+
+
+state 9
+
+    4 expr: expr . ADD expr
+    5     | expr . MINUS expr
+    6     | expr . TIMES expr
+    7     | expr . DIVIDE expr
+    9     | MINUS expr .
+
+    $default  reduce using rule 9 (expr)
+
+
+state 10
+
+    4 expr: expr . ADD expr
+    5     | expr . MINUS expr
+    6     | expr . TIMES expr
+    7     | expr . DIVIDE expr
+    8     | LEFTPAR expr . RIGHTPAR
+
+    ADD       shift, and go to state 12
+    MINUS     shift, and go to state 13
+    TIMES     shift, and go to state 14
+    DIVIDE    shift, and go to state 15
+    RIGHTPAR  shift, and go to state 17
+
+
+state 11
+
+   11 expr: Identifier equal . expr
+
+    MINUS       shift, and go to state 3
+    LEFTPAR     shift, and go to state 4
+    NUMBER      shift, and go to state 5
+    Identifier  shift, and go to state 6
+
+    expr  go to state 18
+
+
+state 12
+
+    4 expr: expr ADD . expr
+
+    MINUS       shift, and go to state 3
+    LEFTPAR     shift, and go to state 4
+    NUMBER      shift, and go to state 5
+    Identifier  shift, and go to state 6
+
+    expr  go to state 19
+
+
+state 13
+
+    5 expr: expr MINUS . expr
+
+    MINUS       shift, and go to state 3
+    LEFTPAR     shift, and go to state 4
+    NUMBER      shift, and go to state 5
+    Identifier  shift, and go to state 6
+
+    expr  go to state 20
+
+
+state 14
+
+    6 expr: expr TIMES . expr
+
+    MINUS       shift, and go to state 3
+    LEFTPAR     shift, and go to state 4
+    NUMBER      shift, and go to state 5
+    Identifier  shift, and go to state 6
+
+    expr  go to state 21
+
+
+state 15
+
+    7 expr: expr DIVIDE . expr
+
+    MINUS       shift, and go to state 3
+    LEFTPAR     shift, and go to state 4
+    NUMBER      shift, and go to state 5
+    Identifier  shift, and go to state 6
+
+    expr  go to state 22
+
+
+state 16
+
+    1 lines: lines expr ';' .
+
+    $default  reduce using rule 1 (lines)
+
+
+state 17
+
+    8 expr: LEFTPAR expr RIGHTPAR .
+
+    $default  reduce using rule 8 (expr)
+
+
+state 18
+
+    4 expr: expr . ADD expr
+    5     | expr . MINUS expr
+    6     | expr . TIMES expr
+    7     | expr . DIVIDE expr
+   11     | Identifier equal expr .
+
+    ADD     shift, and go to state 12
+    MINUS   shift, and go to state 13
+    TIMES   shift, and go to state 14
+    DIVIDE  shift, and go to state 15
+
+    $default  reduce using rule 11 (expr)
+
+
+state 19
+
+    4 expr: expr . ADD expr
+    4     | expr ADD expr .
+    5     | expr . MINUS expr
+    6     | expr . TIMES expr
+    7     | expr . DIVIDE expr
+
+    TIMES   shift, and go to state 14
+    DIVIDE  shift, and go to state 15
+
+    $default  reduce using rule 4 (expr)
+
+
+state 20
+
+    4 expr: expr . ADD expr
+    5     | expr . MINUS expr
+    5     | expr MINUS expr .
+    6     | expr . TIMES expr
+    7     | expr . DIVIDE expr
+
+    TIMES   shift, and go to state 14
+    DIVIDE  shift, and go to state 15
+
+    $default  reduce using rule 5 (expr)
+
+
+state 21
+
+    4 expr: expr . ADD expr
+    5     | expr . MINUS expr
+    6     | expr . TIMES expr
+    6     | expr TIMES expr .
+    7     | expr . DIVIDE expr
+
+    $default  reduce using rule 6 (expr)
+
+
+state 22
+
+    4 expr: expr . ADD expr
+    5     | expr . MINUS expr
+    6     | expr . TIMES expr
+    7     | expr . DIVIDE expr
+    7     | expr DIVIDE expr .
+
+    $default  reduce using rule 7 (expr)
